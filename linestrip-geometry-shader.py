@@ -28,7 +28,6 @@ def ortho(left, right, bottom, top, znear, zfar):
     M[3, 2] = -(zfar + znear) / float(zfar - znear)
     M[3, 3] = 1.0
     return M
-
 vertex_code = """
 #version 120
 attribute vec2 position;
@@ -173,15 +172,14 @@ void main(void)
     // Cap at start
     if( p0 == p1 ) {
         p = p1 - w*v1 - w*n1;
-        gl_Position = projection*vec4(p, 0.0, 1.0);
         v_texcoord = vec2(-w, -w);
         if (p2 == p3) v_alpha = 0.0;
     // Regular join
     } else {
         p = p1 - length_a * miter_a;
-        gl_Position = projection*vec4(p, 0.0, 1.0);
         v_texcoord = vec2(compute_u(p1,p2,p), -w);
     }
+    gl_Position = projection*vec4(p, 0.0, 1.0);
     v_bevel_distance.x = -d0*line_distance(p1+d0*n0*w, p1+d0*n1*w, p);
     v_bevel_distance.y =    -line_distance(p2+d1*n1*w, p2+d1*n2*w, p);
     EmitVertex();
@@ -190,15 +188,14 @@ void main(void)
     // Cap at end
     if( p2 == p3 ) {
         p = p2 + w*v1 + w*n1;
-        gl_Position = projection*vec4(p, 0.0, 1.0);
         v_texcoord = vec2(v_length+w, +w);
         if (p0 == p1) v_alpha = 0.0;
     // Regular join
     } else {
         p = p2 + length_b * miter_b;
-        gl_Position = projection*vec4(p, 0.0, 1.0);
         v_texcoord = vec2(compute_u(p1,p2,p), +w);
     }
+    gl_Position = projection*vec4(p, 0.0, 1.0);
     v_bevel_distance.x =    -line_distance(p1+d0*n0*w, p1+d0*n1*w, p);
     v_bevel_distance.y = +d1*line_distance(p2+d1*n1*w, p2+d1*n2*w, p);
     EmitVertex();
@@ -207,15 +204,14 @@ void main(void)
     // Cap at end
     if( p2 == p3 ) {
         p = p2 + w*v1 - w*n1;
-        gl_Position = projection*vec4(p, 0.0, 1.0);
         v_texcoord = vec2(v_length+w, -w);
         if (p0 == p1) v_alpha = 0.0;
     // Regular join
     } else {
         p = p2 - length_b * miter_b;
-        gl_Position = projection*vec4(p, 0.0, 1.0);
         v_texcoord = vec2(compute_u(p1,p2,p), -w);
     }
+    gl_Position = projection*vec4(p, 0.0, 1.0);
     v_bevel_distance.x =    -line_distance(p1+d0*n0*w, p1+d0*n1*w, p);
     v_bevel_distance.y = -d1*line_distance(p2+d1*n1*w, p2+d1*n2*w, p);
     EmitVertex();
@@ -255,7 +251,8 @@ if sys.platform == 'darwin':
             argTypes=[ctypes.c_char_p],
             doc='glutInitDisplayString(  ) -> None',
         argNames=() )
-        text = ctypes.c_char_p("rgba stencil double samples=8 hidpi")
+        # text = ctypes.c_char_p("rgba stencil double samples=8 hidpi")
+        text = ctypes.c_char_p("rgba double hidpi")
         glutInitDisplayString(text)
     except:
         pass
